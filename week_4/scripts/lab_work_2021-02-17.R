@@ -48,3 +48,4 @@ ggplot(data = ChemData_clean,
 
 ggsave(here("week_4", "output", "lab_ChemData_clean_countplot.png"),       
          width = 7, height = 5)                         ### How I saved my plot ###
+
