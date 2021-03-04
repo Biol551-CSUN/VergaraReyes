@@ -1,0 +1,74 @@
+---
+title: "RMarkdown Wed lab"
+author: "Ruth Vergara Reyes"
+date: "3/3/2021"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+    theme: journal
+    
+---
+
+```{r, setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message = TRUE,
+                      warning = FALSE)
+```
+
+# Introduction
+Today for lab, I will be using **Depth Data** from to analysis and make it into a plot and table.
+
+# Load Libraries
+
+```{r, message = TRUE, warrning = FALSE}
+library(here)
+library(tidyverse)
+library(kableExtra)
+library(lubridate)
+```
+
+# Load Data 
+
+```{r}
+Depth_Data <- read_csv(here("week_5", "data", "DepthData.csv"))
+```
+
+# Data Analysis
+
+```{r, message = TRUE}
+Depth_Data_clean <- Depth_Data %>%
+  mutate(date = ymd_hms(date)) %>%
+  separate(col = date,
+           into = c("Date", "Time"),
+           sep =" ") %>%        ### Seperating the Date and Time into different columns to be able to get rid of dates from the table ###
+  select(-Date)
+
+```
+
+# Making the Plot
+ I will be making a plot that shows as _Time_ goes by the _Depth_ and _Pressure_ increases.
+```{r, message = FALSE, fig.cap="This shows the relationship between **Depth** and **Pressure**", fig.path="../output/"}
+DepthFigure <- Depth_Data_clean %>%
+  ggplot(aes(x = Time,
+             y = AbsPressure,
+             color = Depth ))+
+  geom_point()+
+  geom_smooth()
+
+DepthFigure
+```
+
+# Making the Table
+
+```{r, fig.path="../output/"}
+Depth_Data_Table <- Depth_Data_clean %>%
+  group_by(Time) %>%
+  summarise(AveragePressure = mean(AbsPressure),
+            AverageDepth = mean(Depth)) %>%
+  kbl() %>%
+  kable_material_dark()
+
+Depth_Data_Table
+```
+
