@@ -1,0 +1,69 @@
+---
+title: "Week 7: Monday Lab"
+author: "Ruth Vergara Reyes"
+date: "3/8/2021"
+output: 
+  prettydoc::html_pretty:
+    theme: hpstr
+    
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE)
+```
+
+# Introduction
+Today for lab we will be making a map of the meteorites on RMarkdown. The data for meteorites comes from a previous TidyTuesday. 
+
+# Load the Libraries 
+```{r}
+library(tidyverse)
+library(here)
+library(maps)
+library(mapdata)
+library(mapproj)
+```
+
+# Load the Data
+```{r}
+meteorites <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-06-11/meteorites.csv")
+world <- map_data("world")         ### getting the data to be able to put things in the map properly ##
+```
+
+# Cleaning up the Data
+```{r}
+meteorites_clean <- meteorites %>%
+  filter(year == 1990:2013)        ### Filtering out any data that is not within these years to condense data ##
+```
+
+
+# Making a plot
+```{r, fig.cap="This is a map of meteorites that fell in the years 1990-2013", fig.path="../output/"}
+ggplot()+
+  geom_polygon(data = world,
+               aes(x = long, 
+                   y = lat,
+                   group = group,
+                   fill = region),
+               color = "black")+                   ### How we got the map ##
+  geom_point(data = meteorites_clean,              ### The data we will be mapping ##
+             aes(x = long,
+                 y = lat, 
+                 size = mass))+                    ### How we are going to be mapping the data ###
+  labs(x = "",
+       y = "",
+       title = "Map of Meteorites that fell in the years 1990-2013",
+       size = "Mass in grams")+                    ### How I named the axis and titles ##
+  guides(fill = FALSE)+
+  theme_minimal()+
+  scale_size_continuous()+
+  theme(panel.background = element_rect(fill = "lightblue"),
+        title = element_text(size = 13))+ 
+  coord_map(projection = "mercator",
+            xlim = c(-180,180))                    ### Theme of plot (map) ##
+  
+```
+
+

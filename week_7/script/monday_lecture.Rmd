@@ -1,0 +1,196 @@
+---
+title: 'Monday Lecture: Mapping'
+author: "Ruth Vergara Reyes"
+date: "3/8/2021"
+output: 
+  html_document: 
+    toc: TRUE
+    toc_float: TRUE
+    theme: journal
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE,
+                      error = FALSE)
+```
+
+# Introduction 
+Today we will be learning how to map data onto a world map. 
+
+# Load Libraries
+```{r}
+library(tidyverse)
+library(here)
+library(maps)
+library(mapdata)
+library(mapproj)
+```
+
+# Load Data 
+```{r}
+# Read in data on population in California by county
+popdata<-read_csv(here("Week_7","data","CApopdata.csv"))
+
+#read in data on number of seastars at different field sites
+stars<-read_csv(here("Week_7","data","stars.csv"))
+```
+
+# Packages we can use
+
+**map_data("location")** is the function we use to pull whatever base layer we want in the map
+```{r}
+world <- map_data("world")
+
+head(world)
+```
+## We can get a map for just the United States of America
+```{r}
+usa <- map_data("usa")
+
+head(usa)
+```
+## We can also get maps of different countries in the world.
+```{r}
+## For example Italy
+italy <- map_data("italy")
+
+head(italy)
+```
+## We can get data and different resolutions for states in the USA by using: 
+```{r}
+state <- map_data("state")
+
+head(state)
+```
+## We can also get the data and differ. resolutions for different counties in the USA by using: 
+```{r}
+counties <- map_data("county")
+
+head(counties)
+```
+
+# Structure of the data
+- **long** is longitude. Things to the west of the prime meridian are negative.
+- **lat** is latitude.
+- **order** shows in which order ggplot should “connect the dots”
+- **region and subregion** tell what region or subregion a set of points surrounds.
+- **group.** This is very important! ggplot2’s functions can take a group argument which controls (amongst other things) whether adjacent points should be connected by lines. If they are in the same group, then they get connected, but if they are in different groups then they don’t. Essentially, having to points in different groups means that ggplot “lifts the pen” when going between them.
+
+# Making a map of the world
+```{r}
+ggplot()+
+  geom_polygon(data = world, 
+               aes(x = long, 
+                   y = lat, 
+                   group = group, 
+                   fill = region),      ### How we got each country to be colored ##
+               color = "black")+
+  guides(fill = FALSE)                  ### How we got rid of legend ##
+ 
+```
+
+
+### This is what happens when we forget **group = group**
+```{r}
+ggplot()+
+  geom_polygon(data = world, aes(x = long, y = lat))
+```
+
+
+### Changing the Visuals
+```{r}
+ggplot()+
+  geom_polygon(data = world, 
+               aes(x = long, 
+                   y = lat, 
+                   group = group, 
+                   fill = region),
+               color = "black")+
+  theme_minimal()+
+  guides(fill = FALSE)+
+  theme(panel.background = element_rect(fill = "lightblue"))   ### How we got the water(ocean) to be blue ## 
+
+```
+
+
+### Changing the Map Projection
+what we are changing: *coord_map(projection **" "**, xlim = c(**' - '**))*
+```{r}
+ggplot()+
+  geom_polygon(data = world, 
+               aes(x = long, 
+                   y = lat, 
+                   group = group, 
+                   fill = region),
+               color = "black")+
+  theme_minimal()+
+  guides(fill = FALSE)+
+  theme(panel.background = element_rect(fill = "lightblue"))+
+  coord_map(projection = "sinusoidal",      ### Whatever is in the " " is what we change ###
+            xlim = c(-180,180))             ### The numbers is what we can change ##
+
+```
+
+
+# California Map
+The following is a map of the different counties in CA.
+
+
+### Cleaning up the data
+```{r}
+head(state)                          ### Using state data ##
+
+CA_data <- state %>%
+  filter(region == "california")     ### Filtering to get CA data only ##
+
+head(counties)[1:3,]                 ### only showing the first 3 rows for space
+
+head(popdata)
+
+CApop_county<-popdata %>%
+  select("subregion" = County, Population)  %>% # rename the county col
+  inner_join(counties) %>%
+  filter(region == "california")     ### some counties have same names in other states
+
+head(CApop_county)
+```
+
+
+### Mapping the Data 
+```{r}
+ggplot()+
+  geom_polygon(data = CApop_county,         ### Data we will use ##
+               aes(x = long, 
+                   y = lat, 
+                   group = group, 
+                   fill = Population),
+               color = "black")+
+  theme_void()+
+  coord_map()+
+  scale_fill_gradient(trans = "log10")      ### Color scale ##
+```
+
+
+### Adding a layer of points 
+```{r}
+head(stars)
+
+ggplot()+
+geom_polygon(data = CApop_county, 
+             aes(x = long, 
+                 y = lat, 
+                 group = group,
+                 fill = Population),  
+             color = "black")+
+  geom_point(data = stars,                     ### add a point at all my sites ##
+             aes(x = long, 
+                 y = lat,
+                 size = star_no))+ 
+  coord_map()+
+  theme_void() +
+  scale_fill_gradient(trans = "log10")+
+  labs(size = "# stars/m2") +
+  ggsave(here("week_7","output","CApop.pdf"))  ### How we save the image ##
+
+
