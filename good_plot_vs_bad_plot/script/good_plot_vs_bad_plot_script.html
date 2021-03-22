@@ -262,7 +262,18 @@ view(CApop)</code></pre>
 <div id="data-analysis" class="section level1">
 <h1>Data Analysis</h1>
 <pre class="r"><code>CApop_clean &lt;- CApop %&gt;%
-  filter(Population &gt; 444000)</code></pre>
+  filter(Population &gt; 444000)
+
+head(CApop)</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##   County         Population
+##   &lt;chr&gt;               &lt;dbl&gt;
+## 1 los angeles      10081570
+## 2 san diego         3316073
+## 3 orange            3168044
+## 4 riverside         2411439
+## 5 san bernardino    2149031
+## 6 santa clara       1927470</code></pre>
 </div>
 <div id="bad-plot" class="section level1">
 <h1>Bad Plot</h1>

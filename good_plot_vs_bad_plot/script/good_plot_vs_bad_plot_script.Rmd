@@ -30,9 +30,11 @@ view(CApop)
 ```
 
 # Data Analysis
-```{r}
+```{r, message=TRUE}
 CApop_clean <- CApop %>%
   filter(Population > 444000)
+
+head(CApop)
 ```
 
 
