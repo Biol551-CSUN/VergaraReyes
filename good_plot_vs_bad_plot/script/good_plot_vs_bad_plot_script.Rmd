@@ -1,0 +1,98 @@
+---
+title: "Good Plot vs. Bad Plot"
+author: "Ruth Vergara Reyes"
+date: "3/20/2021"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+    theme: journal
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE)
+```
+
+# Load Libraries
+```{r}
+library(tidyverse)
+library(here)
+library(calecopal)
+```
+
+
+# Load Data
+```{r}
+CApop <- read_csv(here("good_plot_vs_bad_plot", "data", "CAPopdata.csv"))
+
+view(CApop)
+```
+
+# Data Analysis
+```{r}
+CApop_clean <- CApop %>%
+  filter(Population > 444000)
+```
+
+
+# Bad Plot
+
+This plot is a bad plot because of the following reasons:
+
+- It does not explain what the data represents
+- It has a distracting background color
+- The plot background color makes it difficult to read the names and values
+- The color choice makes the title hard to read
+- The legend is not necessary and is distracting
+- The title can be misleading
+  - Someone that is not from California would not know that these are counties in California.
+
+```{r}
+ggplot(data = CApop_clean,
+       mapping = aes(x = Population,
+                     y = County,
+                     fill = County))+                          ### Values I used for my axis #
+  geom_col()+                                                  ### Type of plot I made #  
+  labs(x = "",
+       y = "",
+       title = "Biggest Counties")+                            ### Labels for my axis #
+  theme_classic()+                                             ### Theme for my plot #
+  theme(panel.background = element_rect(fill = "hotpink"),
+        plot.background = element_rect(fill = "darkblue"),
+        title = element_text(size = 15,
+                             color = "navyblue"))              ### How I changed different parts of my plot. #
+
+```
+
+
+# Good Plot
+
+The following is a good plot because:
+
+- The colors that were chosen are not distracting.
+- Everything is labeled properly
+- The legend that would be distracting is not there
+- The plot overall is clean and simple
+- Everything that needs labels is labeled
+- The title is clear and explains what the data means
+
+```{r, fig.cap="This is a plot that shows the population of the top 19 most populated counties in California", fig.path="../output/"}
+ggplot(data = CApop_clean,
+       mapping = aes(x = County,
+                     y = Population,
+                     fill = County))+                     ### How I got my different axis #
+  geom_col()+                                             ### Type of plot I made #
+  labs(x = "County",
+       y = "Total Population",
+       title = "Most Populated Counties in California")+  ### How I made the labels #
+  theme_classic()+                                           ### The overall theme of the plot #
+  scale_x_discrete(guide = guide_axis(angle = 45))+       ### How I got my x axis lables to be angled #
+  theme(title = element_text(size = 20,
+                             color = "black"),
+        axis.title = element_text(size = 13),
+        legend.position = "none",
+        plot.background = element_rect(fill = "lightgrey"),
+        panel.background = element_rect(fill = "white"))                         ### How I changed different aspects of the titles and how I got rid of the unnecessary legend # 
+```
+
