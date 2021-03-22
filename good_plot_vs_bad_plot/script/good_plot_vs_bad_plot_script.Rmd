@@ -48,7 +48,7 @@ This plot is a bad plot because of the following reasons:
 - The title can be misleading
   - Someone that is not from California would not know that these are counties in California.
 
-```{r}
+```{r, fig.path="../output/"}
 ggplot(data = CApop_clean,
        mapping = aes(x = Population,
                      y = County,
