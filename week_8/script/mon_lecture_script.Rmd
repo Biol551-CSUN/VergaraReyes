@@ -1,0 +1,148 @@
+---
+title: "Monday Lecture"
+author: "Ruth Vergara Reyes"
+date: "3/22/2021"
+output: 
+  html_document:
+    toc: True
+    toc_float: True
+    
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE)
+```
+
+# Introduction 
+Today we will  be using new packages and learning how to use them. 
+
+# Load Libraries 
+```{r, message=FALSE}
+library(tidyverse)
+library(here)
+library(patchwork) # for bringing plots together #
+library(ggrepel)   # for repelling labels #
+library(gganimate) # animations #
+library(magick)    # for images #
+library(palmerpenguins)  # data we used #
+```
+
+# Patchwork
+```{r}
+# plot 1
+p1<-penguins %>%
+  ggplot(aes(x = body_mass_g, 
+             y = bill_length_mm, 
+             color = species))+
+  geom_point()
+
+p1
+
+# plot 2
+p2<-penguins %>%
+  ggplot(aes(x = sex, 
+             y = body_mass_g, 
+             color = species))+
+  geom_jitter(width = 0.2)
+
+p2
+
+```
+
+
+### Putting them together
+```{r}
+p1+p2 +
+  plot_layout(guides = 'collect')+
+  plot_annotation(tag_levels = 'A')
+```
+```{r}
+p1/p2 +
+  plot_layout(guides = 'collect')+
+  plot_annotation(tag_levels = 'A')
+```
+
+
+# ggrepel
+```{r}
+View(mtcars)
+
+ggplot(mtcars, aes(x = wt, 
+                   y = mpg, 
+                   label = rownames(mtcars))) +
+  geom_text() + # creates a text label
+  geom_point(color = 'red')
+
+
+ggplot(mtcars, aes(x = wt, 
+                   y = mpg, 
+                   label = rownames(mtcars))) +
+  geom_text_repel() + # repel them
+  geom_point(color = 'red')
+
+
+ggplot(mtcars, aes(x = wt, 
+                   y = mpg, 
+                   label = rownames(mtcars))) +
+  geom_label_repel() + # repel them
+  geom_point(color = 'red')
+```
+
+
+# gganimate
+```{r}
+penguins %>%
+ggplot(aes(x = body_mass_g, 
+            y = bill_depth_mm, 
+            color = species))+ 
+  geom_point() +
+  transition_states(
+     year, # what are we animating by
+     transition_length = 2, #The relative length of the transition.
+     state_length = 1 # The length of the pause between transitions
+   ) +
+  ease_aes("sine-in-out") +
+  ggtitle('Year: {closest_state}') +
+  anim_save(here("week_8","output","mypengiungif.gif"))
+```
+
+
+# Magick
+This is for advance image processing
+```{r}
+penguin<-image_read("https://pngimg.com/uploads/penguin/pinguin_PNG9.png")
+penguin
+```
+
+
+### To put it on a plot:
+
+First we need to save the plot as an image
+Then we read in the plot as a magick image
+```{r}
+penguins %>%
+ggplot(aes(x = body_mass_g, 
+            y = bill_depth_mm, 
+            color = species)) +
+  geom_point() +
+  ggsave(here("Week_8","output","penguinplot.png"))
+
+penplot<-image_read(here("Week_8","output","penguinplot.png"))
+out <- image_composite(penplot, penguin, offset = "+70+30")
+out
+
+```
+
+
+### WE can do this with gifts too
+```{r}
+# Read in a penguin gif
+pengif<-image_read("https://media3.giphy.com/media/H4uE6w9G1uK4M/giphy.gif")
+outgif <- image_composite(penplot, pengif, gravity = "center")
+animation <- image_animate(outgif, fps = 10, optimize = TRUE)
+animation
+
+```
+
+
