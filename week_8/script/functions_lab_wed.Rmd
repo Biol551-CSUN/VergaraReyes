@@ -77,7 +77,7 @@ else{
 
 
 ### Testing the function
-```{r}
+```{r, fig.path="../output/"}
 # The following plot shows variations of pH based on "Zone"
 ChemPlot(x = Zone, y = pH)+
     labs(x = "Zone",   
