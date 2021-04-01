@@ -1,0 +1,47 @@
+---
+title: "Group Project Notes"
+author: "Ruth Vergara Reyes"
+date: "3/31/2021"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+For our project we will be presenting the package **"Janitor"**
+
+
+# Install the Following Package
+
+**install.packages("janitor")**
+
+
+# Load Libraries
+```{r, message=FALSE}
+library(janitor)
+library(tidyverse)
+library(here)
+```
+
+
+# Notes about Package
+
+
+### The main functions are:
+
+-  clean_names()
+-  tabyl()
+-  remove_empty()
+-  get_dupes()
+-  excel_numeric_to_date()
+
+
+### clean_names()
+
+This function 
