@@ -1,0 +1,65 @@
+---
+title: "Troubleshooting Lecture"
+author: "Ruth Vergara Reyes"
+date: "4/5/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction:
+
+This lecture will be about how to troubleshoot through R.
+
+# Lecture Notes:
+
+### Errors in Code:
+
+You can tell there is an error from either a:
+
+- red circle with an x in it next to the line number
+- red squiggly line under part of your code, indicating a syntax issue.
+
+You can see the error in the console when running code that is broken.
+
+### Messages we can get:
+- **Error:** There’s a fatal error in your code that prevented it from being run through successfully. You need to fix it for the code to run.
+  - ALWAYS read the message, it can help solve the problem.
+
+- **Warning:** Non-fatal errors (don’t stop the code from running, but this is a potential problem that you should know about).
+
+- **Message:** Here’s some helpful information about the code you just ran (you can hide these if you want to)
+
+
+# Installing Packages 
+
+```{r}
+install.packages('reprex') #reproducible example
+install.packages('datapasta') #copy and paste
+install.packages('styler') # copy and paste in style
+```
+
+### Using the new packages:
+```{r}
+library(tidyverse)
+mpg %>%
+  ggplot(aes( x = displ, 
+              y = hwy))+
+  geom_point(aes(color = class))
+```
+Using tribble
+```{r}
+data<-tibble::tribble(
+    ~lat,    ~long, ~star_no,
+  33.548, -117.805,      10L,
+  35.534, -121.083,       1L,
+  39.503, -123.743,      25L,
+  32.863,  -117.24,      22L,
+   33.46, -117.671,       8L,
+  33.548, -117.805,       3L
+  )
+
+```
+
