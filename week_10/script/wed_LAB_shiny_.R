@@ -25,7 +25,7 @@ weight_data <- baby_data%>%                ### WEIGHT DATA ###
   separate(col = Date,
            into = c("month", "day", "year"),
            sep = "/")%>%                   ### How I got rid of columns I don't need ###
-  mutate(weight_data, Date = paste(year, month, day, sep = "-"))%>%
+  mutate(weight_data, Date = paste(month, day, sep = "-"))%>%
   select(-Time, -End.Time, 
          -Percentile, -Duration, 
          -Info, -Notes, -X,
@@ -110,22 +110,20 @@ server <- function(input, output) {
       rbabies() %>% 
         ggplot(aes(
           x = factor(Date),
-          y = Amount
-        )) +
-        geom_point() +
+          y = Amount )) +
+        geom_point()+
         xlab("Date") +
         ylab("Weight of Baby") +
         theme_classic(base_size = 16)+
-        theme(axis.title = element_text(size = 13),  # make axis font larger
+        theme(axis.title = element_text(size = 17),  # make axis font larger
               axis.text.x = element_text(angle = 45, vjust = 0.5, hjust = 1), # change the angle of the x axis text to see it all
               plot.title = element_text(hjust = 0.5))
     } else if (input$'Baby Name' == "Micah") {
       rbabies() %>% 
         ggplot(aes(
           x = factor(Date),
-          y = Amount
-        )) +
-        geom_point() +
+          y = Amount )) +
+        geom_point()+
         xlab("Date") +
         ylab("Weight of Baby") +
         theme_classic(base_size = 16)+
