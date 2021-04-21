@@ -1,0 +1,73 @@
+---
+title: "Lab on Factors"
+author: "Ruth Vergara Reyes"
+date: "4/21/2021"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+    theme: journal
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      error = FALSE,
+                      warning = FALSE)
+```
+
+# Load Libraries
+```{r, message=FALSE}
+library(tidyverse)
+library(here)
+library(janitor)
+library(calecopal)
+```
+
+# Load Data
+```{r}
+intertidal_data <- read_csv(here("week_12", "data", "intertidaldata.csv"))
+```
+
+
+# Cleaning up the data
+```{r}
+intertid_clean <- intertidal_data %>%
+  clean_names()%>%
+  mutate(quadrat = str_replace_all(quadrat, pattern = "\\.", replacement = "" )) %>%
+  mutate(quadrat = str_replace_all(quadrat, pattern = "[:digit:]", replacement = "")) %>%
+  mutate(quadrat = str_trim(quadrat, side = "right"))
+  
+view(intertid_clean)
+
+unique(intertid_clean$quadrat)
+
+level_order <- c('Low', 'Mid', 'High')
+```
+
+
+# Making the Plot
+```{r}
+pal = cal_palette("sage",3)
+  
+Intertidal_plot <- intertid_clean %>%
+  ggplot(aes(x = factor(quadrat, level = level_order),
+             y = gooseneck_barnacles,
+             fill = quadrat))+
+  geom_col()+
+  facet_wrap(~site, ncol = 3)+
+  labs(x = "Tide Level",
+       y = "Number of Gooseneck Barnacles",
+       title = "Gooseneck Barnacles")+
+  theme_bw()+
+  theme(axis.title = element_text(size = 12),
+        title = element_text(size = 18))+              ### Code I used to customize my font sizes ###
+  scale_fill_manual(values = pal)  ### Code used to customize my colors in my plot ###
+
+  
+
+Intertidal_plot
+  
+```
+
+
+
