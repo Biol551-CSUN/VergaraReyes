@@ -12,7 +12,8 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
                       error = FALSE,
-                      warning = FALSE)
+                      warning = FALSE,
+                      message = FALSE)
 ```
 
 # Load Libraries
@@ -32,41 +33,49 @@ intertidal_data <- read_csv(here("week_12", "data", "intertidaldata.csv"))
 # Cleaning up the data
 ```{r}
 intertid_clean <- intertidal_data %>%
-  clean_names()%>%
-  mutate(quadrat = str_replace_all(quadrat, pattern = "\\.", replacement = "" )) %>%
-  mutate(quadrat = str_replace_all(quadrat, pattern = "[:digit:]", replacement = "")) %>%
-  mutate(quadrat = str_trim(quadrat, side = "right"))
+  clean_names()%>%                                                                          
+  ### changing all the names to the same format
+  mutate(quadrat = str_replace_all(quadrat, pattern = "\\.", replacement = "" )) %>%        
+  ### removing the periods from the character vector
+  mutate(quadrat = str_replace_all(quadrat, pattern = "[:digit:]", replacement = "")) %>%   
+  ### removes the numbers from the character vector
+  mutate(quadrat = str_trim(quadrat, side = "right"))                                       
+  ### removes the white space
   
 view(intertid_clean)
 
-unique(intertid_clean$quadrat)
+unique(intertid_clean$quadrat)                          
+### to check and make sure that all the characters have similar format
 
-level_order <- c('Low', 'Mid', 'High')
+level_order <- c('Low', 'Mid', 'High')                                                      
+### Putting the characters in the order I want them
 ```
 
 
 # Making the Plot
 ```{r}
-pal = cal_palette("sage",3)
+pal = cal_palette("halfdome",3)                            ### Choosing the color pallate 
   
 Intertidal_plot <- intertid_clean %>%
-  ggplot(aes(x = factor(quadrat, level = level_order),
-             y = gooseneck_barnacles,
-             fill = quadrat))+
-  geom_col()+
-  facet_wrap(~site, ncol = 3)+
+  ggplot(aes(x = factor(quadrat, level = level_order),     ### Putting the x axis with the order we want
+             y = gooseneck_barnacles,         
+             fill = quadrat))+                             ### setting up the axises for the graph
+  geom_col()+                                              ### type of graph I am making
+  facet_wrap(~site, ncol = 3, scales = "free")+            ### facet wrap modifications 
   labs(x = "Tide Level",
        y = "Number of Gooseneck Barnacles",
-       title = "Gooseneck Barnacles")+
-  theme_bw()+
+       title = "Gooseneck Barnacles at Different Tides")+  ### editing the labels in the graph
+  theme_classic()+                                         ### theme of the graph
   theme(axis.title = element_text(size = 12),
-        title = element_text(size = 18))+              ### Code I used to customize my font sizes ###
-  scale_fill_manual(values = pal)  ### Code used to customize my colors in my plot ###
+        title = element_text(size = 18),                   ### editing text size 
+        legend.position = "none")+                         ### getting rid of the graph because it's not essential ###
+  scale_fill_manual(values = pal)                          ### Code used to customize my colors in my plot ###
 
   
 
 Intertidal_plot
   
+
 ```
 
 
