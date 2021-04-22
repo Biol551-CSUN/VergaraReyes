@@ -39,7 +39,8 @@ intertid_clean <- intertidal_data %>%
   ### removing the periods from the character vector
   mutate(quadrat = str_replace_all(quadrat, pattern = "[:digit:]", replacement = "")) %>%   
   ### removes the numbers from the character vector
-  mutate(quadrat = str_trim(quadrat, side = "right"))                                       
+  mutate(quadrat = str_trim(quadrat, side = "right"))%>%
+  write_csv(here("week_12","data", "clean_intertidal_data.csv"))
   ### removes the white space
   
 view(intertid_clean)
@@ -71,7 +72,8 @@ Intertidal_plot <- intertid_clean %>%
         legend.position = "none")+                         ### getting rid of the graph because it's not essential ###
   scale_fill_manual(values = pal)                          ### Code used to customize my colors in my plot ###
 
-  
+ggsave(here("week_12","output","gooseneck_barnacles_tide.png"),
+        width = 7, height = 5)                             ### How I saved my plot ###
 
 Intertidal_plot
   
