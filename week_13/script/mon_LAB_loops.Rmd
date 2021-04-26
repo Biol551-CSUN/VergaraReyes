@@ -1,0 +1,77 @@
+---
+title: 'Monday Lab: Loops & Purrr'
+author: "Ruth Vergara Reyes"
+date: "4/26/2021"
+output: 
+  html_document: 
+  toc: TRUE
+  toc_float: TRUE
+  theme:  journal
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      error = FALSE)
+```
+
+# Load Libraries 
+```{r}
+library(tidyverse)
+library(here)
+```
+
+# Making the **for loop**
+```{r}
+Homework <-here("week_13", "data", "homework")  # making the path to the files  
+files <- dir(path = Homework, pattern = ".csv") # making the directory for files we will be using 
+
+files
+
+
+hw_data <-data.frame(matrix(nrow = length(files), ncol = 5))                     # make an empty dataframe that has one row for each file and 3 columns
+colnames(hw_data)<-c("filename","mean_temp", "sd_temp", "mean_light", "sd_light")  # give the dataframe column names
+
+hw_data
+
+
+raw_data<-read.csv(paste0(Homework,"/",files[1]))
+head(raw_data) 
+
+mean_temp<-mean(raw_data$Temp.C, na.rm = TRUE)
+mean_temp  ## It worked
+
+for (i in 1:length(files)){ 
+raw_data<-read_csv(paste0(Homework,"/",files[i])) ## adding in the raw data
+hw_data$filename[i]<-files[i] ## First we want to add the filenames
+hw_data$mean_temp[i]<-mean(raw_data$Temp.C, na.rm =TRUE) ## adding mean for temp.
+hw_data$sd_temp[i]<-sd(raw_data$Temp.C, na.rm =TRUE) ## adding sd temp
+hw_data$mean_light[i] <- mean(raw_data$Intensity.lux, na.rm = TRUE) ## mean for light
+hw_data$sd_light[i] <- sd(raw_data$Intensity.lux, na.rm = TRUE)  ## adding sd light
+}
+hw_data
+```
+
+
+# Making the Purrr Way 
+```{r}
+### Pointing to the location on the computer 
+Homework <-here("week_13", "data", "homework")
+files <- dir(path = Homework, pattern = ".csv",  full.names = TRUE) #saving the path with the full names 
+files
+
+ 
+
+hw_path_pur <- files %>%
+  set_names()%>%                       # sets the ID of each list to file name
+  map_df(read_csv,.id = "filename")%>% # map everything to a dataframe and put the id in a column called filename
+  group_by(filename) %>%               # grouping by file
+  summarise(mean_temp = mean(Temp.C, na.rm = TRUE),
+            sd_temp = sd(Temp.C, na.rm = TRUE),
+            mean_light = mean(Intensity.lux, na.rm = TRUE),
+            sd_light = sd(Intensity.lux, na.rm = TRUE)) # adding the mean and sd of the temp and light 
+
+hw_path_pur
+  
+```
+
